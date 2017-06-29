@@ -1,0 +1,2 @@
+# LumpiBot
+Discord LumpiBot
