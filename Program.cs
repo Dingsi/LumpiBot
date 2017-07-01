@@ -1,14 +1,9 @@
-﻿using System;
-
+﻿
 namespace LumpiBot
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            
-
-
-        }
+        public static void Main(string[] args) =>
+            new LumpiBot().RunAndBlockAsync(args).GetAwaiter().GetResult();
     }
 }
