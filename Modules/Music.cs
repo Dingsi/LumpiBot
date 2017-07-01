@@ -4,13 +4,14 @@ using Discord.WebSocket;
 using Discord.Commands;
 using LumpiBot.Logging;
 using LumpiBot.Modules.Player;
+using Discord;
 
 namespace LumpiBot.Modules
 {
     public class Music : ModuleBase
     {
         public const string MusicDataPath = "cache/music";
-        public MusicPlayer musicPlayer;
+        public static MusicPlayer musicPlayer;
 
         public Music()
         {
@@ -22,66 +23,60 @@ namespace LumpiBot.Modules
             LumpiBot.Client.UserVoiceStateUpdated += Client_UserVoiceStateUpdated;
         }
 
-        [Command("play")]
-        [Summary("Play Music from Url")]
+        [Command("play", RunMode = RunMode.Async)]
+        [Summary("Play Music from Youtube")]
         [Alias("p")]
-        public Task Play(string Url)
+        public async Task PlayAsync(string Url)
         {
-            var user = Context.User;
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Play triggered by {0}", user.Username));
-
-            // TODO: Play Audio from Url
-
-            return Task.CompletedTask;
+            await Context.Message.DeleteAsync();
+            if (((IGuildUser)Context.User).VoiceChannel != null)
+            {
+                await musicPlayer.PlayAsync(Url, ((IGuildUser)Context.User).VoiceChannel, Context.Channel);
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync(string.Format("{0}, you need to join an Voice Channel first!", Context.User.Username));
+            }
         }
 
         [Command("stop")]
         [Summary("Stop Playback")]
-        public Task Stop()
+        public async Task StopAsync()
         {
-            var user = Context.User;
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Stop Playback triggered by {0}", user.Username));
-
-            // TODO: Stop Playback
-
-            return Task.CompletedTask;
+            await Context.Message.DeleteAsync();
+            await musicPlayer.StopAsync();
         }
 
         [Command("pause")]
         [Summary("Pause Playback")]
-        public Task Pause()
+        public async Task PauseAsync()
         {
             var user = Context.User;
+            await Context.Message.DeleteAsync();
             Log.Message(Discord.LogSeverity.Debug, string.Format("Pause Playback triggered by {0}", user.Username));
 
             // TODO: Pause Playback
-
-            return Task.CompletedTask;
         }
 
         [Command("resume")]
         [Summary("Resume Playback")]
-        public Task Resume()
+        public async Task ResumeAsync()
         {
             var user = Context.User;
+            await Context.Message.DeleteAsync();
             Log.Message(Discord.LogSeverity.Debug, string.Format("Resume Playback triggered by {0}", user.Username));
 
             // TODO: Resume Playback
-
-            return Task.CompletedTask;
         }
 
         [Command("volume")]
         [Summary("Set Volume of Playback")]
         [Alias("vol")]
-        public Task Volume([Summary("New Volume")] int NewVolume)
+        public async Task VolumeAsync([Summary("New Volume")] int NewVolume)
         {
             var user = Context.User;
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Set Volume to {0} by {1}", NewVolume, user.Username));
-
-            // TODO: Set Volume
-
-            return Task.CompletedTask;
+            await Context.Message.DeleteAsync();
+            await musicPlayer.SetVolumeAsync(NewVolume);
         }
 
         private Task Client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState oldState, SocketVoiceState newState)

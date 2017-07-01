@@ -7,6 +7,7 @@
 ### Prerequisites
 - Notepad++ (or some other decent text Editor)
 - NET.Core 1.1
+- FFmpeg ([Win Download](https://ffmpeg.zeranoe.com/builds/))
 - Visual Studio (for NuGet Packages)
 - LibSodium, LibOpus (found in _libs for Win, Unix)
 - An Discord Bot Token and Client Id ([Create your Bot here...](https://discordapp.com/developers/applications/me))
