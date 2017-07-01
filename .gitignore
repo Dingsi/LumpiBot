@@ -52,3 +52,6 @@ artifacts/
 
 #LumpiBot Cache
 [Cc]ache/
+
+# Ignore DLLs in RootDir
+*.dll
