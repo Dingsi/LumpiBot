@@ -49,3 +49,6 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+
+#LumpiBot Cache
+[Cc]ache/
