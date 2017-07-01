@@ -3,17 +3,21 @@ using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord.Commands;
 using LumpiBot.Logging;
+using LumpiBot.Modules.Player;
 
 namespace LumpiBot.Modules
 {
     public class Music : ModuleBase
     {
         public const string MusicDataPath = "cache/music";
+        public MusicPlayer musicPlayer;
 
         public Music()
         {
             try { Directory.Delete(MusicDataPath, true); } catch { }
             Directory.CreateDirectory(MusicDataPath);
+
+            musicPlayer = new MusicPlayer();
 
             LumpiBot.Client.UserVoiceStateUpdated += Client_UserVoiceStateUpdated;
         }

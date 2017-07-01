@@ -15,6 +15,7 @@
 ### Installation
 - Download LumpiBot via Git.
 - Open LumpiBot.sln in Visual Studio to download all missing NuGet Packages.
+- Build Project in Visual Studio or via. 'dotnet build' Command.
 - Run LumpiBot for the first Time, it will create an config.json at [Project Folder]/bin/netcoreappX.X/
 - Insert your Bot Token:
 ```json
@@ -29,3 +30,4 @@
 | Discord.Net | https://github.com/RogueException/Discord.Net |
 | Discord.Net.Commands | https://github.com/RogueException/Discord.Net |
 | Newtonsoft.Json | http://www.newtonsoft.com/json |
+| LibVideo | https://www.nuget.org/packages/libvideo.dingsi/1.4.0 |
