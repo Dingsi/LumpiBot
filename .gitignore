@@ -54,4 +54,5 @@ artifacts/
 [Cc]ache/
 
 # Ignore DLLs in RootDir
-*.dll
+!*/*.dll
+/*.dll
