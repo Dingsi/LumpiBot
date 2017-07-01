@@ -18,8 +18,8 @@ namespace LumpiBot.Modules
             LumpiBot.Client.UserVoiceStateUpdated += Client_UserVoiceStateUpdated;
         }
 
-        [Command("play"), Summary("Plays the Music from the given Url."), Alias("p")]
-        public Task Play(string url)
+        [Command("play"), Summary("Play Music from Url"), Alias("p")]
+        public Task Play(string Url)
         {
             var user = Context.User;
             Log.Message(Discord.LogSeverity.Debug, string.Format("Play triggered by {0}", user.Username));
@@ -29,7 +29,7 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("stop"), Summary("Stops the Playback.")]
+        [Command("stop"), Summary("Stop Playback")]
         public Task Stop()
         {
             var user = Context.User;
@@ -40,7 +40,7 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("pause"), Summary("Paused the Playback.")]
+        [Command("pause"), Summary("Paused Playback")]
         public Task Pause()
         {
             var user = Context.User;
@@ -51,7 +51,7 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("resume"), Summary("Resume the Playback.")]
+        [Command("resume"), Summary("Resume Playback")]
         public Task Resume()
         {
             var user = Context.User;
@@ -62,11 +62,11 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("volume"), Summary("Set the Volume"), Alias("vol")]
-        public Task Volume(int setVolume)
+        [Command("volume"), Summary("Set Volume"), Alias("vol")]
+        public Task Volume(int NewVolume)
         {
             var user = Context.User;
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Set Volume to {0} by {1}", setVolume, user.Username));
+            Log.Message(Discord.LogSeverity.Debug, string.Format("Set Volume to {0} by {1}", NewVolume, user.Username));
 
             // TODO: Set Volume
 
