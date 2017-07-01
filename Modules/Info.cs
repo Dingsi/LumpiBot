@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 
 namespace LumpiBot.Modules
 {
-    public class Info : ModuleBase
+    public class Info : ModuleBase<CommandContext>
     {
-        public Info()
-        {
-
-        }
-
-        [Command("help"), Summary("Show all available Commands"), Alias("cmd", "cmds", "commands")]
+        [Command("help")]
+        [Summary("Show all available Commands")]
+        [Alias("cmd", "cmds", "commands")]
         public async Task ShowCommands()
         {
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
+
             var returnStr = "";
+            int index = 1;
             foreach (var cmd in LumpiBot.CommandService.Commands)
             {
                 string parameters = "";
@@ -24,10 +28,13 @@ namespace LumpiBot.Modules
                 {
                     parameters += param.Name + ", ";
                 }
-
-                if (cmd.Parameters.Count == 0)
+                if(parameters != string.Empty)
                 {
-                    parameters = "None";
+                    parameters = parameters.Trim().TrimEnd(',');
+                }
+                else
+                {
+                    parameters = "/";
                 }
 
                 string aliases = "";
@@ -35,13 +42,17 @@ namespace LumpiBot.Modules
                 {
                     aliases += alias + ", ";
                 }
-
-                if (cmd.Aliases.Count == 0)
+                if (aliases != string.Empty)
                 {
-                    aliases = "None";
+                    aliases = aliases.Trim().TrimEnd(',');
+                }
+                else
+                {
+                    aliases = "/";
                 }
 
-                returnStr += string.Format("```{0} - {1}\n\t- Aliases: {2}\n\t- Parameters: {3}```\n", cmd.Name, cmd.Summary, aliases, parameters);
+                returnStr += string.Format("```markdown\n#{0} {1} - {2}\n\t- Aliases: {3}\n\t- Parameters: {4}\n```\n", index, cmd.Name, cmd.Summary, aliases, parameters);
+                index++;
             }
 
             await Context.Channel.SendMessageAsync(returnStr);

@@ -31,6 +31,8 @@ namespace LumpiBot.Configuration
                         return (T)Convert.ChangeType(Configuration.TokenType, typeof(T));
                     case "Token":
                         return (T)Convert.ChangeType(Configuration.Token, typeof(T));
+                    case "BotPrefix":
+                        return (T)Convert.ChangeType(Configuration.BotPrefix, typeof(T));
                     default:
                         break;
                 }
@@ -42,6 +44,7 @@ namespace LumpiBot.Configuration
 
     public class LumpiConfig
     {
+        public string BotPrefix = "!";
         public string Token = "";
         public TokenType TokenType = TokenType.Bot;
         public LogSeverity LogSeverity = LogSeverity.Debug;
@@ -77,6 +80,7 @@ namespace LumpiBot.Configuration
                     this.Token = Cfg.Token;
                     this.TokenType = Cfg.TokenType;
                     this.LogSeverity = Cfg.LogSeverity;
+                    this.BotPrefix = Cfg.BotPrefix;
                 }
                 catch { Log.Message(LogSeverity.Error, string.Format("Unable to read config.json at {0}, exiting...", ConfigFilePath)); Console.ReadKey(); Environment.Exit(0); }
             }

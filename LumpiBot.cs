@@ -18,6 +18,7 @@ namespace LumpiBot
         public static DiscordShardedClient Client { get; private set; }
         public static CommandService CommandService { get; private set; }
         public static IServiceProvider Services { get; private set; }
+        public static List<string> PrefixDict { get; private set; }
 
         public async Task RunAndBlockAsync(params string[] args)
         {
@@ -50,7 +51,15 @@ namespace LumpiBot
 
             // Add Command Modules
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
-            
+
+            // Register Prefixes
+            PrefixDict = new List<string>();
+            foreach(var module in CommandService.Modules)
+            {
+                Log.Message(LogSeverity.Debug, string.Format("Loaded {0} with Prefix '{1}'", module.Summary, module.Name));
+                PrefixDict.Add(module.Name);
+            }
+
             Client.Log += _client_Log;
             Client.LoggedIn += _client_LoggedIn;
             Client.MessageReceived += _client_MessageReceivedAsync;
@@ -69,10 +78,10 @@ namespace LumpiBot
             if (message == null) return;
 
             int argPos = 0;
-
-            // Determine if the message is a command, based on if it starts with '.' or a mention prefix
-            if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(Client.CurrentUser, ref argPos))) return;
             
+            // Determine if the message is a command, based on if it starts with '!' or a mention prefix
+            if (!(message.HasStringPrefix(Config.Get<string>("BotPrefix"), ref argPos) || message.HasMentionPrefix(Client.CurrentUser, ref argPos))) return;
+
             var context = new CommandContext(Client, message);
 
             var result = await CommandService.ExecuteAsync(context, argPos, Services);

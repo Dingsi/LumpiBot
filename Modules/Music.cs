@@ -18,7 +18,9 @@ namespace LumpiBot.Modules
             LumpiBot.Client.UserVoiceStateUpdated += Client_UserVoiceStateUpdated;
         }
 
-        [Command("play"), Summary("Play Music from Url"), Alias("p")]
+        [Command("play")]
+        [Summary("Play Music from Url")]
+        [Alias("p")]
         public Task Play(string Url)
         {
             var user = Context.User;
@@ -29,7 +31,8 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("stop"), Summary("Stop Playback")]
+        [Command("stop")]
+        [Summary("Stop Playback")]
         public Task Stop()
         {
             var user = Context.User;
@@ -40,7 +43,8 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("pause"), Summary("Paused Playback")]
+        [Command("pause")]
+        [Summary("Pause Playback")]
         public Task Pause()
         {
             var user = Context.User;
@@ -51,7 +55,8 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("resume"), Summary("Resume Playback")]
+        [Command("resume")]
+        [Summary("Resume Playback")]
         public Task Resume()
         {
             var user = Context.User;
@@ -62,8 +67,10 @@ namespace LumpiBot.Modules
             return Task.CompletedTask;
         }
 
-        [Command("volume"), Summary("Set Volume"), Alias("vol")]
-        public Task Volume(int NewVolume)
+        [Command("volume")]
+        [Summary("Set Volume of Playback")]
+        [Alias("vol")]
+        public Task Volume([Summary("New Volume")] int NewVolume)
         {
             var user = Context.User;
             Log.Message(Discord.LogSeverity.Debug, string.Format("Set Volume to {0} by {1}", NewVolume, user.Username));
