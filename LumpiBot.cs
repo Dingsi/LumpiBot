@@ -21,18 +21,18 @@ namespace LumpiBot
 
         public async Task RunAsync(params string[] args)
         {
+            Log.Initialize(LogSeverity.Debug);
+            Config.Initialize();
+
+            Log.SetLevel(Config.Get<LogSeverity>("LogSeverity"));
+
             this._client = new DiscordShardedClient(new DiscordSocketConfig
             {
                 MessageCacheSize = 10,
-                LogLevel = LogSeverity.Warning,
+                LogLevel = Config.Get<LogSeverity>("LogSeverity"),
                 ConnectionTimeout = int.MaxValue,
             });
 
-            Config.Initialize();
-            Config.Setup();
-
-            Log.Initialize(Config.Get<LogSeverity>("LogSeverity"));
-            
             this._client.Log += _client_Log;
             this._client.LoggedIn += _client_LoggedIn;
 
@@ -46,7 +46,11 @@ namespace LumpiBot
 
         private Task _client_Log(LogMessage arg)
         {
-            Log.Message(arg.Severity, arg.Message);
+            if(arg.Severity <= Config.Get<LogSeverity>("LogSeverity"))
+            {
+                Log.Message(arg.Severity, arg.Message);
+            }
+            
             return Task.CompletedTask;
         }
 

@@ -13,8 +13,14 @@ namespace LumpiBot.Logging
         public Dictionary<LogSeverity, Tuple<ConsoleColor, string>> LogTypeInfo { get; }
 
         readonly BlockingCollection<Tuple<LogSeverity, string, string>> logQueue;
+
         LogSeverity logLevel;
-        
+
+        internal void SetLevel(LogSeverity logSeverity)
+        {
+            logLevel = logSeverity;
+        }
+
         public Logger()
         {
             LogTypeInfo = new Dictionary<LogSeverity, Tuple<ConsoleColor, string>>
@@ -89,7 +95,7 @@ namespace LumpiBot.Logging
 
         void SetLogger(LogSeverity type, string text)
         {
-            if ((logLevel & type) == type)
+            if (type <= logLevel)
             {
                 logQueue.Add(Tuple.Create(type, DateTime.Now.ToString("T"), text));
             }

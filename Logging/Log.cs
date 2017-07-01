@@ -7,10 +7,15 @@ namespace LumpiBot.Logging
     {
         public static Logger Logger;
 
-        public static void Initialize(LogSeverity logTypes, LogFile logFile = null)
+        public static void Initialize(LogSeverity logSeverity, LogFile logFile = null)
         {
             Logger = Logger ?? new Logger();
-            Logger.Initialize(logTypes, logFile);
+            Logger.Initialize(logSeverity, logFile);
+        }
+
+        public static void SetLevel(LogSeverity logSeverity)
+        {
+            Logger.SetLevel(logSeverity);
         }
 
         public static void Message(LogSeverity logType, string text)
