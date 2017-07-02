@@ -26,9 +26,13 @@ namespace LumpiBot.Modules
         [Command("play", RunMode = RunMode.Async)]
         [Summary("Play Music from Youtube")]
         [Alias("p")]
-        public async Task PlayAsync(string Url)
+        public async Task PlayAsync([Summary("Youtube URL")] string Url)
         {
-            await Context.Message.DeleteAsync();
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
             if (((IGuildUser)Context.User).VoiceChannel != null)
             {
                 await musicPlayer.PlayAsync(Url, ((IGuildUser)Context.User).VoiceChannel, Context.Channel);
@@ -43,30 +47,24 @@ namespace LumpiBot.Modules
         [Summary("Stop Playback")]
         public async Task StopAsync()
         {
-            await Context.Message.DeleteAsync();
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
             await musicPlayer.StopAsync();
         }
 
-        [Command("pause")]
-        [Summary("Pause Playback")]
+        [Command("next")]
+        [Summary("Play next Track")]
         public async Task PauseAsync()
         {
-            var user = Context.User;
-            await Context.Message.DeleteAsync();
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Pause Playback triggered by {0}", user.Username));
-
-            // TODO: Pause Playback
-        }
-
-        [Command("resume")]
-        [Summary("Resume Playback")]
-        public async Task ResumeAsync()
-        {
-            var user = Context.User;
-            await Context.Message.DeleteAsync();
-            Log.Message(Discord.LogSeverity.Debug, string.Format("Resume Playback triggered by {0}", user.Username));
-
-            // TODO: Resume Playback
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
+            await musicPlayer.NextAsync();
         }
 
         [Command("volume")]
@@ -74,8 +72,11 @@ namespace LumpiBot.Modules
         [Alias("vol")]
         public async Task VolumeAsync([Summary("New Volume")] int NewVolume)
         {
-            var user = Context.User;
-            await Context.Message.DeleteAsync();
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
             await musicPlayer.SetVolumeAsync(NewVolume);
         }
 

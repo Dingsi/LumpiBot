@@ -18,7 +18,6 @@ namespace LumpiBot
         public static DiscordShardedClient Client { get; private set; }
         public static CommandService CommandService { get; private set; }
         public static IServiceProvider Services { get; private set; }
-        public static List<string> PrefixDict { get; private set; }
 
         public async Task RunAndBlockAsync(params string[] args)
         {
@@ -51,14 +50,6 @@ namespace LumpiBot
 
             // Add Command Modules
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
-
-            // Register Prefixes
-            PrefixDict = new List<string>();
-            foreach(var module in CommandService.Modules)
-            {
-                Log.Message(LogSeverity.Debug, string.Format("Loaded {0} with Prefix '{1}'", module.Summary, module.Name));
-                PrefixDict.Add(module.Name);
-            }
 
             Client.Log += _client_Log;
             Client.LoggedIn += _client_LoggedIn;
