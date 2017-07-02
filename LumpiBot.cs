@@ -10,6 +10,8 @@ using LumpiBot.Configuration;
 using LumpiBot.Modules;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using LumpiBot.Modules.Player;
+using System.IO;
 
 namespace LumpiBot
 {
@@ -18,6 +20,8 @@ namespace LumpiBot
         public static DiscordShardedClient Client { get; private set; }
         public static CommandService CommandService { get; private set; }
         public static IServiceProvider Services { get; private set; }
+
+        public static string CacheFolder = "cache\\";
 
         public async Task RunAndBlockAsync(params string[] args)
         {
@@ -29,6 +33,16 @@ namespace LumpiBot
         {
             Log.Initialize(LogSeverity.Debug);
             Config.Initialize();
+
+            try
+            {
+                Directory.Delete(CacheFolder, true);
+            }
+            catch { }
+            finally
+            {
+                Directory.CreateDirectory(CacheFolder);
+            }
 
             Log.SetLevel(Config.Get<LogSeverity>("LogSeverity"));
 

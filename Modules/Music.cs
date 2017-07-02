@@ -10,14 +10,10 @@ namespace LumpiBot.Modules
 {
     public class Music : ModuleBase
     {
-        public const string MusicDataPath = "cache/music";
         public static MusicPlayer musicPlayer;
 
         public Music()
         {
-            try { Directory.Delete(MusicDataPath, true); } catch { }
-            Directory.CreateDirectory(MusicDataPath);
-
             musicPlayer = new MusicPlayer();
 
             LumpiBot.Client.UserVoiceStateUpdated += Client_UserVoiceStateUpdated;
@@ -43,6 +39,24 @@ namespace LumpiBot.Modules
             }
         }
 
+        [Command("test", RunMode = RunMode.Async)]
+        public async Task PlayTest()
+        {
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
+            if (((IGuildUser)Context.User).VoiceChannel != null)
+            {
+                await musicPlayer.PlayAsync("https://www.youtube.com/watch?v=gF7gJTliXXo", ((IGuildUser)Context.User).VoiceChannel, Context.Channel);
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync(string.Format("{0}, you need to join an Voice Channel first!", Context.User.Username));
+            }
+        }
+
         [Command("stop")]
         [Summary("Stop Playback")]
         public async Task StopAsync()
@@ -52,7 +66,7 @@ namespace LumpiBot.Modules
                 await Context.Message.DeleteAsync();
             }
             catch { }
-            await musicPlayer.StopAsync();
+            musicPlayer.Stop();
         }
 
         [Command("next")]
@@ -64,7 +78,7 @@ namespace LumpiBot.Modules
                 await Context.Message.DeleteAsync();
             }
             catch { }
-            await musicPlayer.NextAsync();
+            musicPlayer.Next();
         }
 
         [Command("volume")]
@@ -78,6 +92,18 @@ namespace LumpiBot.Modules
             }
             catch { }
             await musicPlayer.SetVolumeAsync(NewVolume);
+        }
+
+        [Command("leave")]
+        [Summary("Leaves the current Channel")]
+        public async Task leaveAsync()
+        {
+            try
+            {
+                await Context.Message.DeleteAsync();
+            }
+            catch { }
+            await musicPlayer.LeaveAsync();
         }
 
         private Task Client_UserVoiceStateUpdated(SocketUser user, SocketVoiceState oldState, SocketVoiceState newState)
