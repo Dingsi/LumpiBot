@@ -21,6 +21,7 @@ namespace LumpiBot.Modules
 
         [Command("play", RunMode = RunMode.Async)]
         [Summary("Play Music from Youtube")]
+        [RequireUserPermission(GuildPermission.Speak)]
         [Alias("p")]
         public async Task PlayAsync([Summary("Youtube URL")] string Url)
         {
@@ -39,26 +40,9 @@ namespace LumpiBot.Modules
             }
         }
 
-        [Command("test", RunMode = RunMode.Async)]
-        public async Task PlayTest()
-        {
-            try
-            {
-                await Context.Message.DeleteAsync();
-            }
-            catch { }
-            if (((IGuildUser)Context.User).VoiceChannel != null)
-            {
-                await musicPlayer.PlayAsync("https://www.youtube.com/watch?v=gF7gJTliXXo", ((IGuildUser)Context.User).VoiceChannel, Context.Channel);
-            }
-            else
-            {
-                await Context.Channel.SendMessageAsync(string.Format("{0}, you need to join an Voice Channel first!", Context.User.Username));
-            }
-        }
-
         [Command("stop")]
         [Summary("Stop Playback")]
+        [RequireUserPermission(GuildPermission.Speak)]
         public async Task StopAsync()
         {
             try
@@ -71,6 +55,7 @@ namespace LumpiBot.Modules
 
         [Command("next")]
         [Summary("Play next Track")]
+        [RequireUserPermission(GuildPermission.Speak)]
         public async Task PauseAsync()
         {
             try
@@ -83,6 +68,7 @@ namespace LumpiBot.Modules
 
         [Command("volume")]
         [Summary("Set Volume of Playback")]
+        [RequireUserPermission(GuildPermission.Speak)]
         [Alias("vol")]
         public async Task VolumeAsync([Summary("New Volume")] int NewVolume)
         {
@@ -96,6 +82,7 @@ namespace LumpiBot.Modules
 
         [Command("leave")]
         [Summary("Leaves the current Channel")]
+        [RequireUserPermission(GuildPermission.Speak)]
         public async Task leaveAsync()
         {
             try

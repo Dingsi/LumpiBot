@@ -48,7 +48,7 @@ namespace LumpiBot
 
             Client = new DiscordShardedClient(new DiscordSocketConfig
             {
-                MessageCacheSize = 10,
+                MessageCacheSize = 256,
                 LogLevel = Config.Get<LogSeverity>("LogSeverity"),
                 ConnectionTimeout = int.MaxValue,
             });

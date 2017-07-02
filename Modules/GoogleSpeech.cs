@@ -14,15 +14,20 @@ namespace LumpiBot.Modules
 {
     public class GoogleSpeech : ModuleBase
     {
+        public static string SpeechCacheFolder = "speech\\";
+
         [Command("say", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.Speak)]
+        [RequireUserPermission(GuildPermission.SendTTSMessages)]
         [Summary("Google TTS")]
-        public async Task Say(params string[] text)
+        public async Task Say([Remainder] string text)
         {
-            try
+            if (!Directory.Exists(LumpiBot.CacheFolder + SpeechCacheFolder))
             {
-                await Context.Message.DeleteAsync();
+                Directory.CreateDirectory(LumpiBot.CacheFolder + SpeechCacheFolder);
             }
-            catch { }
+
+            try { await Context.Message.DeleteAsync(); } catch { }
 
             var voiceChannel = ((IGuildUser)Context.User).VoiceChannel;
             IAudioClient audioClient = null;
@@ -30,14 +35,19 @@ namespace LumpiBot.Modules
             try { await audioClient.StopAsync().ConfigureAwait(false); } catch { }
             audioClient = await voiceChannel.ConnectAsync();
 
-            var msg = string.Join(" ", text).ToLower();
+            var msg = text.ToLower();
             msg = msg.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss").Replace("´", "");
             string url = "http://translate.google.com/translate_tts?tl=de&q=" + msg + "&client=tw-ob";
+
+            HttpClient client = new HttpClient();
+            byte[] data = await client.GetByteArrayAsync(url);
+
+            File.WriteAllBytes(LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat", data);
 
             var p = Process.Start(new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = $"-i \"{url}\" -f s16le -ar 48000 -vn -ac 2 pipe:1 -loglevel quiet",
+                Arguments = $"-i \"{LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat"}\" -f s16le -ar 48000 -vn -ac 2 pipe:1 -loglevel quiet",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = false,
@@ -60,6 +70,10 @@ namespace LumpiBot.Modules
                 }
                 outStream.Write(buffer, 0, byteCount);
             }
+
+            await Task.Delay(5000);
+            try { File.Delete(LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat"); } catch { }
+            try { await audioClient.StopAsync(); } catch { }
         }
     }
 }
