@@ -296,26 +296,6 @@ namespace LumpiBot.Modules.Player
             return output;
         }
 
-        private unsafe byte[] AdjustVolume(byte[] audioSamples, float volume)
-        {
-            if (Math.Abs(volume - 1f) < 0.0001f) return audioSamples;
-
-            // 16-bit precision for the multiplication
-            var volumeFixed = (int)Math.Round(volume * 65536d);
-
-            var count = audioSamples.Length / 2;
-
-            fixed (byte* srcBytes = audioSamples)
-            {
-                var src = (short*)srcBytes;
-
-                for (var i = count; i != 0; i--, src++)
-                    *src = (short)(((*src) * volumeFixed) >> 16);
-            }
-
-            return audioSamples;
-        }
-
         private YouTubeVideo GetYouTubeVideo(string Url)
         {
             var videos = YouTube.Default.GetAllVideos(Url).Where(v => v.AdaptiveKind == AdaptiveKind.Audio);

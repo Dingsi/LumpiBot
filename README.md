@@ -9,11 +9,11 @@
 - NET.Core 1.1
 - FFmpeg ([Win Download](https://ffmpeg.zeranoe.com/builds/))
 - Visual Studio (for NuGet Packages)
-- LibSodium, LibOpus (found in _libs for Win, Unix)
+- LibSodium, LibOpus (found in _libs for Win, Linux)
 - An Discord Bot Token and Client Id ([Create your Bot here...](https://discordapp.com/developers/applications/me))
 - Invitation Link: https://discordapp.com/oauth2/authorize?client_id=[YOUR_CLIENT_ID]&scope=bot
 
-### Installation
+### Installation (Windows)
 - Download LumpiBot via Git.
 - Open LumpiBot.sln in Visual Studio to download all missing NuGet Packages.
 - Build Project in Visual Studio or via. 'dotnet build' Command.
@@ -23,6 +23,17 @@
     "Token": "_INSERT_TOKEN_HERE_",
 ```
 - Save and run your Bot.
+
+### Installation (Linux)
+- Download LumpiBot via Git.
+- Use Command 'dotnet restore'
+- Use Command 'dotnet build'
+- Run LumpiBot for the first Time, it will create an config.json at [Project Folder]/bin/netcoreappX.X/
+- Insert your Bot Token:
+```json
+    "Token": "_INSERT_TOKEN_HERE_",
+```
+- Save and run your Bot via. 'dotnet run'.
 
 ### Used NuGet Packages
 
