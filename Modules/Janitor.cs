@@ -25,13 +25,5 @@ namespace LumpiBot.Modules
                 }
             });
         }
-
-        private async Task EndCleanAsync(IEnumerable<IMessage> messages)
-        {
-            foreach (var message in messages)
-            {
-                await message.DeleteAsync();
-            }
-        }
     }
 }

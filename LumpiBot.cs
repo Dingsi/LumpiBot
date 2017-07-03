@@ -104,10 +104,12 @@ namespace LumpiBot
             return Task.CompletedTask;
         }
 
-        private async Task _client_LoggedInAsync()
+        private Task _client_LoggedInAsync()
         {
             var TokenType = Client.TokenType;
             Log.Message(LogSeverity.Verbose, string.Format("Logged in as {0}.", TokenType));
+
+            return Task.CompletedTask;
         }
     }
 }
