@@ -99,7 +99,7 @@ namespace LumpiBot.Modules
             if (usr == null || oldState.VoiceChannel == newState.VoiceChannel)
                 return Task.CompletedTask;
 
-            // TODO: Check If bot is moved or channel is empty.
+            // Check If bot is moved or channel is empty.
 
             return Task.CompletedTask;
         }

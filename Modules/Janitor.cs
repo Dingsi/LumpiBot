@@ -14,22 +14,14 @@ namespace LumpiBot.Modules
         [Alias("purge", "clear", "cleanup", "c")]
         [Priority(1000)]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task CleanAsync(int count = 10)
+        public async Task CleanAsync(int count = 100)
         {
             try { await Context.Message.DeleteAsync(); } catch { }
-            var index = 0;
-            var delete = new List<IMessage>(count);
-            await Context.Channel.GetMessagesAsync().ForEachAsync(async batch =>
+            await Context.Channel.GetMessagesAsync(count).ForEachAsync(async batch =>
             {
-                foreach (var msg in batch.OrderByDescending(msg => msg.Timestamp))
+                foreach(var msg in batch)
                 {
-                    if (index >= count)
-                    {
-                        try { await EndCleanAsync(delete); } catch { }
-                        return;
-                    }
-                    delete.Add(msg);
-                    index++;
+                    try { await msg.DeleteAsync(); } catch { }
                 }
             });
         }

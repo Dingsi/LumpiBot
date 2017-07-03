@@ -66,7 +66,7 @@ namespace LumpiBot
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly());
 
             Client.Log += _client_Log;
-            Client.LoggedIn += _client_LoggedIn;
+            Client.LoggedIn += _client_LoggedInAsync;
             Client.MessageReceived += _client_MessageReceivedAsync;
 
             try
@@ -104,11 +104,10 @@ namespace LumpiBot
             return Task.CompletedTask;
         }
 
-        private Task _client_LoggedIn()
+        private async Task _client_LoggedInAsync()
         {
             var TokenType = Client.TokenType;
             Log.Message(LogSeverity.Verbose, string.Format("Logged in as {0}.", TokenType));
-            return Task.CompletedTask;
         }
     }
 }

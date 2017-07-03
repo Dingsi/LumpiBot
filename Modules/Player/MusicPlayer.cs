@@ -37,6 +37,8 @@ namespace LumpiBot.Modules.Player
 
         public async Task PlayAsync(string Url, IVoiceChannel voiceChannel, IMessageChannel txtChannel)
         {
+            await LumpiBot.Client.SetGameAsync(string.Empty, null, StreamType.NotStreaming);
+
             if (!isQueueRunning)
             {
                 await RunQueueAsync();
@@ -108,11 +110,7 @@ namespace LumpiBot.Modules.Player
                             audioClient = await playingTrack.sourceVoiceChannel.ConnectAsync();
                             if (audioClient != null)
                             {
-                                try
-                                {
-                                    await currentTrack.sourceTextChannel.SendMessageAsync($"Playing Track \"{playingTrack.SourceVideo.Title}\".");
-                                }
-                                catch { }
+                                try { await LumpiBot.Client.SetGameAsync(playingTrack.SourceVideo.Title); } catch { }
 
                                 await StreamAsync(playingTrack).ConfigureAwait(true);
                             }
@@ -132,6 +130,7 @@ namespace LumpiBot.Modules.Player
         {
             try
             {
+                try { await LumpiBot.Client.SetGameAsync(string.Empty); } catch { }
                 try { await audioClient.StopAsync().ConfigureAwait(false); } catch { Log.Message(LogSeverity.Warning, "MusicPlayer.cs: Unable to Stop Audio Client"); }
                 audioClient = await playingTrack.sourceVoiceChannel.ConnectAsync();
             }
@@ -259,6 +258,7 @@ namespace LumpiBot.Modules.Player
             {
                 await bufferTask;
                 inStream.Dispose();
+                await LumpiBot.Client.SetGameAsync(string.Empty);
             }
         }
 
