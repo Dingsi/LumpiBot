@@ -8,11 +8,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using VideoLibrary;
+using Newtonsoft.Json;
+using System.Xml;
+using LumpiBot.Configuration;
+using System.Web;
 
 namespace LumpiBot.Modules.Player
 {
@@ -21,8 +27,9 @@ namespace LumpiBot.Modules.Player
         private const int _milliseconds = 20;
         private const int _samplesPerFrame = (48000 / 1000) * _milliseconds;
         private const int _frameBytes = 3840;   //16-bit, 2 channels
-        public TimeSpan TotalTime { get; set; } = TimeSpan.Zero;
-        public TimeSpan CurrentTime => TimeSpan.FromSeconds(bytesSent / (float)_frameBytes / (1000 / (float)_milliseconds));
+        public static string CurrentTrack = string.Empty;
+        public static TimeSpan TotalTime = TimeSpan.Zero;
+        public static TimeSpan CurrentTime = TimeSpan.Zero;
         private ulong bytesSent { get; set; }
 
         public static IAudioClient audioClient = null;
@@ -48,11 +55,14 @@ namespace LumpiBot.Modules.Player
             var YouTubeVideo = GetYouTubeVideo(Url);
             if (YouTubeVideo != null)
             {
-                var Track = new Track() { SourceVideo = YouTubeVideo, CancelTokenSource = new CancellationTokenSource(), sourceVoiceChannel = voiceChannel, sourceTextChannel = txtChannel };
+                var query = HttpUtility.ParseQueryString(new Uri(Url).Query);
+                var videoId = query["v"];
+
+                var Track = new Track() { Id = videoId, SourceVideo = YouTubeVideo, CancelTokenSource = new CancellationTokenSource(), sourceVoiceChannel = voiceChannel, sourceTextChannel = txtChannel };
                 Queue.Enqueue(Track);
 
-                var msg = await txtChannel.SendMessageAsync($"▶ Track \"{Track.SourceVideo.Title}\" enqueued.");
-                await Task.Delay(5000);
+                var msg = await txtChannel.SendMessageAsync($"▶ \"{Track.SourceVideo.Title}\" enqueued.");
+                await Task.Delay(2000);
                 await msg.DeleteAsync();
             }
         }
@@ -89,6 +99,8 @@ namespace LumpiBot.Modules.Player
             playingTrack.CancelTokenSource.Cancel();
             try
             {
+                TotalTime = TimeSpan.Zero;
+                CurrentTime = TimeSpan.Zero;
                 Music.isPlaying = false;
                 audioClient.StopAsync();
             }
@@ -140,6 +152,23 @@ namespace LumpiBot.Modules.Player
 
         private async Task StreamAsync(Track currentTrack)
         {
+            try
+            {
+                var response = await new HttpClient().GetStringAsync(string.Format("https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id={0}&key={1}", currentTrack.Id, Config.Configuration.GoogleAPIKey));
+                var json = JsonConvert.DeserializeObject<YTRootObject>(response);
+                if (json != null)
+                {
+                    foreach(var o in json.items)
+                    {
+                        TotalTime = XmlConvert.ToTimeSpan(o.contentDetails.duration);
+                    }
+
+                    CurrentTrack = currentTrack.SourceVideo.Title;
+                    await currentTrack.sourceTextChannel.SendMessageAsync(string.Format("🎶 Now Playing **{0}** *({1})*", currentTrack.SourceVideo.Title, TotalTime));
+                }
+            }
+            catch (Exception ex) { Log.Message(LogSeverity.Error, ex.Message); }
+
             Music.isPlaying = true;
             bytesSent = (ulong)currentTrack.SkipTo * 3840 * 50;
 
@@ -147,8 +176,8 @@ namespace LumpiBot.Modules.Player
             {
                 Directory.CreateDirectory(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar);
             }
-            var filename = LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar + DateTime.Now.Ticks.ToString();
 
+            var filename = LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar + DateTime.Now.Ticks.ToString();
             var inStream = new MusicBuffer(currentTrack, filename, _frameBytes * 100);
             var bufferTask = inStream.BufferSong(currentTrack.CancelTokenSource.Token).ConfigureAwait(false);
 
@@ -212,6 +241,9 @@ namespace LumpiBot.Modules.Player
                     {
                         bytesSent += (ulong)read;
                     }
+
+                    CurrentTime = TimeSpan.FromSeconds(bytesSent / (float)_frameBytes / (1000 / (float)_milliseconds));
+
                     if (read < _frameBytes)
                     {
                         if (read == 0)

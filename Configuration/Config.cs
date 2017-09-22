@@ -33,6 +33,8 @@ namespace LumpiBot.Configuration
                         return (T)Convert.ChangeType(Configuration.Token, typeof(T));
                     case "BotPrefix":
                         return (T)Convert.ChangeType(Configuration.BotPrefix, typeof(T));
+                    case "GoogleAPIKey":
+                        return (T)Convert.ChangeType(Configuration.GoogleAPIKey, typeof(T));
                     default:
                         break;
                 }
@@ -48,10 +50,11 @@ namespace LumpiBot.Configuration
         public string Token = "";
         public TokenType TokenType = TokenType.Bot;
         public LogSeverity LogSeverity = LogSeverity.Debug;
+        public string GoogleAPIKey = "";
 
         public void Setup()
         {
-            var ConfigFilePath = "config.json"; //Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/config.json";
+            var ConfigFilePath = "config.json";
             if (!File.Exists(ConfigFilePath))
             {
                 try
@@ -81,6 +84,7 @@ namespace LumpiBot.Configuration
                     this.TokenType = Cfg.TokenType;
                     this.LogSeverity = Cfg.LogSeverity;
                     this.BotPrefix = Cfg.BotPrefix;
+                    this.GoogleAPIKey = Cfg.GoogleAPIKey;
                 }
                 catch { Log.Message(LogSeverity.Error, string.Format("Unable to read config.json at {0}, exiting...", ConfigFilePath)); Console.ReadKey(); Environment.Exit(0); }
             }

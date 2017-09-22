@@ -6,6 +6,7 @@ namespace LumpiBot.Modules.Player
 {
     public class Track
     {
+        public string Id;
         public YouTubeVideo SourceVideo;
         
         public int SkipTo = 0;

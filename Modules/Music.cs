@@ -41,6 +41,19 @@ namespace LumpiBot.Modules
             }
         }
 
+        [Command("nowplaying")]
+        [Summary("Show current Song Informations.")]
+        [RequireUserPermission(GuildPermission.Speak)]
+        public async Task NowPlayingAsync()
+        {
+            try
+            {
+                await Context.Message.DeleteAsync();
+                await Context.Channel.SendMessageAsync(string.Format("🎵 Currently Playing: **{0}** *({1} / {2})*", MusicPlayer.CurrentTrack, MusicPlayer.CurrentTime, MusicPlayer.TotalTime));
+            }
+            catch { }
+        }
+
         [Command("stop")]
         [Summary("Stop Playback")]
         [RequireUserPermission(GuildPermission.Speak)]
