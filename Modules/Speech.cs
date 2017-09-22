@@ -22,6 +22,13 @@ namespace LumpiBot.Modules
         [Summary("Google TTS")]
         public async Task Say([Remainder] string text)
         {
+            if (Music.isPlaying)
+            {
+                await Context.Message.Channel.SendMessageAsync("❌ Unable to Say something, Music is playing right now...");
+                try { await Context.Message.DeleteAsync(); } catch { }
+                return;
+            }
+
             if (!Directory.Exists(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder))
             {
                 Directory.CreateDirectory(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder);

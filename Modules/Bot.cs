@@ -19,7 +19,7 @@ namespace LumpiBot.Modules
             var self = await Context.Guild.GetCurrentUserAsync();
             await self.ModifyAsync(x => x.Nickname = name);
 
-            await ReplyAsync($"I changed my name to **{name}**");
+            await ReplyAsync($"📜 I changed my name to **{name}**");
         }
     }
 }

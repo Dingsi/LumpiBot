@@ -51,7 +51,7 @@ namespace LumpiBot.Modules.Player
                 var Track = new Track() { SourceVideo = YouTubeVideo, CancelTokenSource = new CancellationTokenSource(), sourceVoiceChannel = voiceChannel, sourceTextChannel = txtChannel };
                 Queue.Enqueue(Track);
 
-                var msg = await txtChannel.SendMessageAsync($"Track \"{Track.SourceVideo.Title}\" enqueued.");
+                var msg = await txtChannel.SendMessageAsync($"▶ Track \"{Track.SourceVideo.Title}\" enqueued.");
                 await Task.Delay(5000);
                 await msg.DeleteAsync();
             }
@@ -65,13 +65,13 @@ namespace LumpiBot.Modules.Player
             if (newVolume <= 100 && newVolume >= 0)
             {
                 Volume = newVolume;
-                var msg = await playingTrack.sourceTextChannel.SendMessageAsync($"Volume set to {newVolume}%");
+                var msg = await playingTrack.sourceTextChannel.SendMessageAsync($"📶 Volume set to {newVolume}%");
                 await Task.Delay(5000);
                 await msg.DeleteAsync();
             }
             else
             {
-                var msg = await playingTrack.sourceTextChannel.SendMessageAsync("Volume must between 0 and 100.");
+                var msg = await playingTrack.sourceTextChannel.SendMessageAsync("📶 Volume must between 0 and 100.");
                 await Task.Delay(5000);
                 await msg.DeleteAsync();
             }
@@ -89,6 +89,7 @@ namespace LumpiBot.Modules.Player
             playingTrack.CancelTokenSource.Cancel();
             try
             {
+                Music.isPlaying = false;
                 audioClient.StopAsync();
             }
             catch { }
@@ -139,6 +140,7 @@ namespace LumpiBot.Modules.Player
 
         private async Task StreamAsync(Track currentTrack)
         {
+            Music.isPlaying = true;
             bytesSent = (ulong)currentTrack.SkipTo * 3840 * 50;
 
             if(!Directory.Exists(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar))
@@ -177,6 +179,7 @@ namespace LumpiBot.Modules.Player
                         if (inStream.BufferingCompleted && count == 1)
                         {
                             Log.Message(LogSeverity.Warning, "Prebuffering canceled. Cannot get any data from the stream.");
+                            Music.isPlaying = false;
                             return;
                         }
                         else
@@ -187,6 +190,7 @@ namespace LumpiBot.Modules.Player
                     else if (prebufferingTask.IsCanceled)
                     {
                         Log.Message(LogSeverity.Warning, "Prebuffering canceled. Cannot get any data from the stream.");
+                        Music.isPlaying = false;
                         return;
                     }
                     finished = true;
@@ -258,6 +262,7 @@ namespace LumpiBot.Modules.Player
             {
                 await bufferTask;
                 inStream.Dispose();
+                Music.isPlaying = false;
                 await LumpiBot.Client.SetGameAsync(string.Empty);
             }
         }

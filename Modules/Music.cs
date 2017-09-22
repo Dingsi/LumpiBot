@@ -10,6 +10,7 @@ namespace LumpiBot.Modules
 {
     public class Music : ModuleBase
     {
+        public static bool isPlaying = false;
         public static MusicPlayer musicPlayer;
 
         public Music()
@@ -36,7 +37,7 @@ namespace LumpiBot.Modules
             }
             else
             {
-                await Context.Channel.SendMessageAsync(string.Format("{0}, you need to join an Voice Channel first!", Context.User.Username));
+                await Context.Channel.SendMessageAsync(string.Format("⚠ {0}, you need to join an Voice Channel first!", Context.User.Username));
             }
         }
 

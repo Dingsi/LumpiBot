@@ -117,7 +117,7 @@ namespace LumpiBot.Modules.Player
         private string GetNextFile()
         {
             string filename = Basename + "-" + NextFileToRead;
-            Log.Message(LogSeverity.Debug, $"MusicBuffer.cs: Require File \"{filename}\"");
+            // Log.Message(LogSeverity.Debug, $"MusicBuffer.cs: Require File \"{filename}\"");
 
             if (NextFileToRead != 0)
             {
