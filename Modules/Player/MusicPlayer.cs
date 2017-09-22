@@ -33,7 +33,7 @@ namespace LumpiBot.Modules.Player
 
         public static Track playingTrack;
 
-        public static string MusicCacheFolder = "music\\";
+        public static string MusicCacheFolder = "music";
 
         public async Task PlayAsync(string Url, IVoiceChannel voiceChannel, IMessageChannel txtChannel)
         {
@@ -141,11 +141,11 @@ namespace LumpiBot.Modules.Player
         {
             bytesSent = (ulong)currentTrack.SkipTo * 3840 * 50;
 
-            if(!Directory.Exists(LumpiBot.CacheFolder + MusicCacheFolder))
+            if(!Directory.Exists(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar))
             {
-                Directory.CreateDirectory(LumpiBot.CacheFolder + MusicCacheFolder);
+                Directory.CreateDirectory(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar);
             }
-            var filename = LumpiBot.CacheFolder + MusicCacheFolder + DateTime.Now.Ticks.ToString();
+            var filename = LumpiBot.CacheFolder + Path.DirectorySeparatorChar + MusicCacheFolder + Path.DirectorySeparatorChar + DateTime.Now.Ticks.ToString();
 
             var inStream = new MusicBuffer(currentTrack, filename, _frameBytes * 100);
             var bufferTask = inStream.BufferSong(currentTrack.CancelTokenSource.Token).ConfigureAwait(false);

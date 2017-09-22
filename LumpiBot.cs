@@ -21,7 +21,7 @@ namespace LumpiBot
         public static CommandService CommandService { get; private set; }
         public static IServiceProvider Services { get; private set; }
 
-        public static string CacheFolder = "cache\\";
+        public static string CacheFolder = "cache";
 
         public async Task RunAndBlockAsync(params string[] args)
         {

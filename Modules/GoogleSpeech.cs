@@ -14,7 +14,7 @@ namespace LumpiBot.Modules
 {
     public class GoogleSpeech : ModuleBase
     {
-        public static string SpeechCacheFolder = "speech\\";
+        public static string SpeechCacheFolder = "speech";
 
         [Command("say", RunMode = RunMode.Async)]
         [RequireUserPermission(GuildPermission.Speak)]
@@ -22,9 +22,9 @@ namespace LumpiBot.Modules
         [Summary("Google TTS")]
         public async Task Say([Remainder] string text)
         {
-            if (!Directory.Exists(LumpiBot.CacheFolder + SpeechCacheFolder))
+            if (!Directory.Exists(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder))
             {
-                Directory.CreateDirectory(LumpiBot.CacheFolder + SpeechCacheFolder);
+                Directory.CreateDirectory(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder);
             }
 
             try { await Context.Message.DeleteAsync(); } catch { }
@@ -42,12 +42,12 @@ namespace LumpiBot.Modules
             HttpClient client = new HttpClient();
             byte[] data = await client.GetByteArrayAsync(url);
 
-            File.WriteAllBytes(LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat", data);
+            File.WriteAllBytes(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder + Path.DirectorySeparatorChar + "loc.dat", data);
 
             var p = Process.Start(new ProcessStartInfo
             {
                 FileName = "ffmpeg",
-                Arguments = $"-i \"{LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat"}\" -f s16le -ar 48000 -vn -ac 2 pipe:1 -loglevel quiet",
+                Arguments = $"-i \"{LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder + Path.DirectorySeparatorChar + "loc.dat"}\" -f s16le -ar 48000 -vn -ac 2 pipe:1 -loglevel quiet",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = false,
@@ -72,7 +72,7 @@ namespace LumpiBot.Modules
             }
 
             await Task.Delay(5000);
-            try { File.Delete(LumpiBot.CacheFolder + SpeechCacheFolder + "loc.dat"); } catch { }
+            try { File.Delete(LumpiBot.CacheFolder + Path.DirectorySeparatorChar + SpeechCacheFolder + Path.DirectorySeparatorChar + "loc.dat"); } catch { }
             try { await audioClient.StopAsync(); } catch { }
         }
     }
