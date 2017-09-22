@@ -50,8 +50,9 @@ artifacts/
 *.svclog
 *.scc
 
-#LumpiBot Cache
+#LumpiBot Config & Cache
 [Cc]ache/
+config.json
 
 # Ignore DLLs in RootDir
 !*/*.dll
