@@ -51,7 +51,7 @@ namespace LumpiBot.Configuration
 
         public void Setup()
         {
-            var ConfigFilePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/config.json";
+            var ConfigFilePath = "config.json"; //Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/config.json";
             if (!File.Exists(ConfigFilePath))
             {
                 try

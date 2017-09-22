@@ -16,6 +16,7 @@
 ### Installation (Windows)
 - Download LumpiBot via Git.
 - Open LumpiBot.sln in Visual Studio to download all missing NuGet Packages.
+- Copy opus.dll & libsodium.dll from _libs into the root directory.
 - Build Project in Visual Studio or via. 'dotnet build' Command.
 - Run LumpiBot for the first Time, it will create an config.json at [Project Folder]/bin/netcoreappX.X/
 - Insert your Bot Token:
@@ -28,6 +29,7 @@
 - Download LumpiBot via Git.
 - Use Command 'dotnet restore'
 - Use Command 'dotnet build'
+- Copy opus.so & libsodium.so from _libs into the root directory.
 - Run LumpiBot for the first Time, it will create an config.json at [Project Folder]/bin/netcoreappX.X/
 - Insert your Bot Token:
 ```json

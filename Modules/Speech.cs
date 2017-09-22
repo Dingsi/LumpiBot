@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace LumpiBot.Modules
 {
-    public class GoogleSpeech : ModuleBase
+    public class Speech : ModuleBase
     {
         public static string SpeechCacheFolder = "speech";
 
@@ -36,7 +36,7 @@ namespace LumpiBot.Modules
             audioClient = await voiceChannel.ConnectAsync();
 
             var msg = text.ToLower();
-            msg = msg.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss").Replace("´", "");
+            msg = msg.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss").Replace("´", "").Replace(" ", "%20");
             string url = "http://translate.google.com/translate_tts?tl=de&q=" + msg + "&client=tw-ob";
 
             HttpClient client = new HttpClient();
