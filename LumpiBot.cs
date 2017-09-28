@@ -17,11 +17,12 @@ namespace LumpiBot
 {
     class LumpiBot
     {
+        public static Config Configuration;
         public static DiscordShardedClient Client { get; private set; }
         public static CommandService CommandService { get; private set; }
         public static IServiceProvider Services { get; private set; }
 
-        public static string CacheFolder = "cache";
+        public static string CacheFolder;
 
         public async Task RunAndBlockAsync(params string[] args)
         {
@@ -32,24 +33,27 @@ namespace LumpiBot
         public async Task RunAsync(params string[] args)
         {
             Log.Initialize(LogSeverity.Debug);
-            Config.Initialize();
+
+            CacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + Path.DirectorySeparatorChar + "lumpibot";
+
+            Configuration = new Config();
 
             try
             {
-                Directory.Delete(CacheFolder, true);
-            }
-            catch { }
-            finally
-            {
+                if(Directory.Exists(CacheFolder))
+                {
+                    Directory.Delete(CacheFolder, true);
+                }
                 Directory.CreateDirectory(CacheFolder);
             }
+            catch { }
 
-            Log.SetLevel(Config.Get<LogSeverity>("LogSeverity"));
+            Log.SetLevel(Configuration.Bot.LogSeverity);
 
             Client = new DiscordShardedClient(new DiscordSocketConfig
             {
                 MessageCacheSize = 256,
-                LogLevel = Config.Get<LogSeverity>("LogSeverity"),
+                LogLevel = Configuration.Bot.LogSeverity,
                 ConnectionTimeout = int.MaxValue,
             });
 
@@ -71,7 +75,7 @@ namespace LumpiBot
 
             try
             {
-                await Client.LoginAsync(Config.Get<TokenType>("TokenType"), Config.Get<string>("Token"));
+                await Client.LoginAsync(Configuration.Bot.TokenType, Configuration.Bot.Token);
                 await Client.StartAsync();
             }
             catch (Exception ex) { Log.Message(LogSeverity.Error, ex.Message); }
@@ -85,7 +89,7 @@ namespace LumpiBot
             int argPos = 0;
             
             // Determine if the message is a command, based on if it starts with '!' or a mention prefix
-            if (!(message.HasStringPrefix(Config.Get<string>("BotPrefix"), ref argPos) || message.HasMentionPrefix(Client.CurrentUser, ref argPos))) return;
+            if (!(message.HasStringPrefix(Configuration.Bot.Prefix, ref argPos) || message.HasMentionPrefix(Client.CurrentUser, ref argPos))) return;
 
             var context = new CommandContext(Client, message);
 
@@ -96,7 +100,7 @@ namespace LumpiBot
 
         private Task _client_Log(LogMessage arg)
         {
-            if(arg.Severity <= Config.Get<LogSeverity>("LogSeverity"))
+            if(arg.Severity <= Configuration.Bot.LogSeverity)
             {
                 Log.Message(arg.Severity, arg.Message);
             }

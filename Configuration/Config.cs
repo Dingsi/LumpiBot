@@ -11,83 +11,83 @@ namespace LumpiBot.Configuration
 {
     public class Config
     {
-        public static LumpiConfig Configuration;
+        public BotConfiguration Bot { get; private set; }
 
-        public static void Initialize()
+        public Config()
         {
-            Configuration = Configuration ?? new LumpiConfig();
-            Configuration.Setup();
-        }
-
-        public static T Get<T>(string v)
-        {
+            var jsonFile = "config.json";
             try
             {
-                switch (v)
+                if (!File.Exists(jsonFile))
                 {
-                    case "LogSeverity":
-                        return (T)Convert.ChangeType(Configuration.LogSeverity, typeof(T));
-                    case "TokenType":
-                        return (T)Convert.ChangeType(Configuration.TokenType, typeof(T));
-                    case "Token":
-                        return (T)Convert.ChangeType(Configuration.Token, typeof(T));
-                    case "BotPrefix":
-                        return (T)Convert.ChangeType(Configuration.BotPrefix, typeof(T));
-                    case "GoogleAPIKey":
-                        return (T)Convert.ChangeType(Configuration.GoogleAPIKey, typeof(T));
-                    default:
-                        break;
+                    BotConfiguration newConfig = new BotConfiguration();
+
+                    Console.WriteLine("-------------------------------------");
+                    Console.WriteLine(" SETUP");
+                    Console.WriteLine("-------------------------------------");
+
+                    Console.WriteLine();
+
+                    Console.WriteLine("Bot Prefix: (Default: !)");
+                    string BotPrefix = Console.ReadLine();
+                    if(BotPrefix == string.Empty)
+                    {
+                        BotPrefix = "!";
+                    }
+                    newConfig.Prefix = BotPrefix;
+                    Console.WriteLine();
+
+                    Console.WriteLine("Discord Bot Token:");
+                    string BotToken = string.Empty;
+                    while (BotToken == string.Empty)
+                    {
+                        BotToken = Console.ReadLine();
+                        if(BotToken == string.Empty)
+                        {
+                            Console.WriteLine("Bot Token is required!");
+                            Console.WriteLine("-> Get your Token from: https://discordapp.com/developers/applications/me");
+                        }
+                    }
+                    newConfig.Token = BotToken;
+                    Console.WriteLine();
+
+                    Console.WriteLine("Google API Key:");
+                    string GoogleAPIKey = string.Empty;
+                    while (GoogleAPIKey == string.Empty)
+                    {
+                        GoogleAPIKey = Console.ReadLine();
+                        if (GoogleAPIKey == string.Empty)
+                        {
+                            Console.WriteLine("Google API Key is required!");
+                            Console.WriteLine("-> Get your Key from: https://developers.google.com/youtube/v3/getting-started");
+                        }
+                    }
+                    newConfig.GoogleAPIKey = GoogleAPIKey;
+
+                    // Default Values
+                    newConfig.LogSeverity = LogSeverity.Debug;
+                    newConfig.TokenType = TokenType.Bot;
+
+                    File.WriteAllText(jsonFile, JsonConvert.SerializeObject(newConfig, Formatting.Indented));
+
+                    Console.WriteLine("-------------------------------------");
+                    Console.WriteLine(" New Configuration File created!");
+                    Console.WriteLine("-------------------------------------");
                 }
+
+                string jsonStr = File.ReadAllText(jsonFile);
+                this.Bot = JsonConvert.DeserializeObject<BotConfiguration>(jsonStr);
             }
-            catch { }
-            return default(T);
+            catch { throw new Exception("Invalid config.json"); }
         }
     }
 
-    public class LumpiConfig
+    public class BotConfiguration
     {
-        public string BotPrefix = "!";
-        public string Token = "";
+        public string Prefix = "!";
         public TokenType TokenType = TokenType.Bot;
-        public LogSeverity LogSeverity = LogSeverity.Debug;
+        public string Token = "";
         public string GoogleAPIKey = "";
-
-        public void Setup()
-        {
-            var ConfigFilePath = "config.json";
-            if (!File.Exists(ConfigFilePath))
-            {
-                try
-                {
-                    StreamWriter sw = File.CreateText(ConfigFilePath);
-                    string configStr = JsonConvert.SerializeObject(this, Formatting.Indented);
-                    sw.Write(configStr);
-                    sw.Flush();
-                    sw.Dispose();
-
-                    Log.Message(LogSeverity.Verbose, string.Format("New config.json created at {0}.", Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)));
-                    Log.Message(LogSeverity.Verbose, "- Please set your Discord Bot Token in config.json and start this Bot again!");
-                    Log.Message(LogSeverity.Verbose, "- Press any Key to Exit...");
-                    Console.ReadKey();
-                    Environment.Exit(0);
-                }
-                catch { Log.Message(LogSeverity.Error, "Unable to create config.json, exiting..."); Console.ReadKey(); Environment.Exit(0); }
-            }
-            else
-            {
-                try
-                {
-                    string configStr = File.ReadAllText(ConfigFilePath);
-                    var Cfg = JsonConvert.DeserializeObject<LumpiConfig>(configStr);
-
-                    this.Token = Cfg.Token;
-                    this.TokenType = Cfg.TokenType;
-                    this.LogSeverity = Cfg.LogSeverity;
-                    this.BotPrefix = Cfg.BotPrefix;
-                    this.GoogleAPIKey = Cfg.GoogleAPIKey;
-                }
-                catch { Log.Message(LogSeverity.Error, string.Format("Unable to read config.json at {0}, exiting...", ConfigFilePath)); Console.ReadKey(); Environment.Exit(0); }
-            }
-        }
+        public LogSeverity LogSeverity = LogSeverity.Debug;
     }
 }

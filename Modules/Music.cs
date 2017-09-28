@@ -42,7 +42,7 @@ namespace LumpiBot.Modules
         }
 
         [Command("nowplaying")]
-        [Summary("Show current Song Informations.")]
+        [Summary("Now Playing")]
         [RequireUserPermission(GuildPermission.Speak)]
         public async Task NowPlayingAsync()
         {

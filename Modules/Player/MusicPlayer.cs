@@ -154,7 +154,7 @@ namespace LumpiBot.Modules.Player
         {
             try
             {
-                var response = await new HttpClient().GetStringAsync(string.Format("https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id={0}&key={1}", currentTrack.Id, Config.Configuration.GoogleAPIKey));
+                var response = await new HttpClient().GetStringAsync(string.Format("https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id={0}&key={1}", currentTrack.Id, LumpiBot.Configuration.Bot.GoogleAPIKey));
                 var json = JsonConvert.DeserializeObject<YTRootObject>(response);
                 if (json != null)
                 {
